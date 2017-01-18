@@ -11,15 +11,16 @@
 
 		<script>
 			var canvas, canvasContext;
-			var ballX = 15;
-			var ballY = 30;
+			var ballX = 100;
+			var ballY = 150;
 			var ballSpeedX = 6;
 			var ballSpeedY = 7; 
 
-            var BRICK_W = 100;
-            var BRICK_H = 50;
-            var BRICK_COUNT = 8;
-            //var brickGrid = [ true, true, true, true, true, true ]
+            var BRICK_W = 80;
+            var BRICK_H = 20;
+            var BRICK_COLS = 10;
+            var BRICK_ROWS = 14;
+            var BRICK_GAP = 2;
             var brickGrid = [];
 
 			const PADDLE_THICKNESS = 10;
@@ -41,10 +42,16 @@
 			}
             
             function setupBrickArray() {
-                for (i = 0; i < BRICK_COUNT; i++) {
-                    brickGrid[i] = "true";
+                for (i = 0; i < BRICK_COLS * BRICK_ROWS; i++) {
+                    //console.log(Math.random());
+                    if (Math.random() < 0.5) {
+                        brickGrid[i] = true;    
+                    } else {
+                        brickGrid[i] = false;    
+                    }
+                    //brickGrid[31] = false;
                 }
-                
+
             }
 
 			window.onload = function() {
@@ -118,7 +125,7 @@
                 }
                 
 
-				console.log(ballX);
+				console.log(ballY);
 			}
 				
 			function drawStuff() {
@@ -131,8 +138,10 @@
 				drawRect(paddleX, canvas.height-PADDLE_DIST_FROM_EDGE, PADDLE_WIDTH, PADDLE_THICKNESS, "orange");
                 
                 drawBricks();                 
-                               
-				drawText(mouseX + ", " + Math.round(mouseY), mouseX,mouseY,'blue');
+                       
+                var mouseBrickCol = Math.floor(mouseX / BRICK_W);
+                var mouseBrickRow = Math.floor(mouseY / BRICK_H);
+				drawText(mouseBrickCol + ", " + Math.floor(mouseBrickRow), mouseX,mouseY,'blue');
                 
 			}
 
@@ -143,7 +152,7 @@
 			}
 
 			function drawCircle(circleX, circleY, radius, colour) {
-//				canvasContext.fillStyle = colour;
+				canvasContext.fillStyle = colour;
 				canvasContext.beginPath();
 				canvasContext.arc(circleX, circleY, radius, 0, Math.PI*2, true);
 				canvasContext.fill();
@@ -151,11 +160,17 @@
 			}
 
             function drawBricks() {
-                for (i = 0; i < BRICK_COUNT; i++) {
-                    if (brickGrid[i]) {
-                        drawRect(BRICK_W*i, 0, BRICK_W-2, BRICK_H, "orange");    
-                    }
+                
+                for (eachRow = 0; eachRow < BRICK_ROWS; eachRow++) {
+                    for (eachCol = 0; eachCol < BRICK_COLS; eachCol++) {
+                        
+                        var arrayIndex = BRICK_COLS * eachRow + eachCol;
+                        
+                        if (brickGrid[arrayIndex]) {
+                            drawRect(BRICK_W*eachCol, BRICK_H * eachRow, BRICK_W-BRICK_GAP, BRICK_H-BRICK_GAP, "orange");    
+                        }
 
+                    }
                 }
                 
                 
